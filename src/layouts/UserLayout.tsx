@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { LogOut, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { logoutUser } from '../store/authSlice';
 
 interface UserLayoutProps {
   children: React.ReactNode;
@@ -12,18 +14,17 @@ interface UserLayoutProps {
 const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('isLoggedIn');
+    dispatch(logoutUser());
     toast({
       title: "Logged out successfully",
       description: "You have been logged out of your account.",
     });
     navigate('/');
   };
-
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -40,7 +41,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">
-                Welcome, {currentUser.email}
+                Welcome, {currentUser?.email}
               </span>
               <Button
                 onClick={handleLogout}

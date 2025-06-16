@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
 import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { registerUser } from '../store/authSlice';
 
 interface SignupFormData {
   name: string;
@@ -19,6 +20,8 @@ interface SignupFormData {
 const Signup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
+  const users = useAppSelector((state) => state.auth.users);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,10 +42,8 @@ const Signup = () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     try {
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      
       // Check if user already exists
-      const existingUser = users.find((u: any) => u.email === data.email);
+      const existingUser = users.find((u) => u.email === data.email);
       if (existingUser) {
         toast({
           title: "Account exists",
@@ -62,10 +63,7 @@ const Signup = () => {
         createdAt: new Date().toISOString(),
       };
 
-      users.push(newUser);
-      localStorage.setItem('users', JSON.stringify(users));
-      localStorage.setItem('currentUser', JSON.stringify(newUser));
-      localStorage.setItem('isLoggedIn', 'true');
+      dispatch(registerUser(newUser));
 
       toast({
         title: "Account created successfully!",

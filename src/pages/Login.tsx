@@ -8,6 +8,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { loginUser } from '../store/authSlice';
 
 interface LoginFormData {
   email: string;
@@ -17,6 +19,8 @@ interface LoginFormData {
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
+  const users = useAppSelector((state) => state.auth.users);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,8 +37,7 @@ const Login = () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     try {
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = users.find((u: any) => u.email === data.email);
+      const user = users.find((u) => u.email === data.email);
 
       if (!user) {
         toast({
@@ -57,8 +60,7 @@ const Login = () => {
       }
 
       // Successful login
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      localStorage.setItem('isLoggedIn', 'true');
+      dispatch(loginUser(user));
       
       toast({
         title: "Welcome back!",

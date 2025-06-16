@@ -1,13 +1,14 @@
 
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useAppSelector } from '../hooks/redux';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
   
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;

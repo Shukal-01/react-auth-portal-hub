@@ -1,13 +1,13 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Lock, User, ArrowRight } from 'lucide-react';
+import { useAppSelector } from '../hooks/redux';
 
 const Index = () => {
   const navigate = useNavigate();
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">

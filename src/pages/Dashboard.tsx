@@ -3,9 +3,13 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Shield, User } from 'lucide-react';
+import { useAppSelector } from '../hooks/redux';
 
 const Dashboard = () => {
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
+  
+  if (!currentUser) return null;
+  
   const createdAt = new Date(currentUser.createdAt);
   const isNewUser = (Date.now() - createdAt.getTime()) < 24 * 60 * 60 * 1000; // Less than 24 hours
 
